@@ -133,4 +133,57 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout };
+const me = async (req, res) => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "token missed",
+    });
+  }
+
+  try {
+    if (token.exp < Date.now()) {
+      res.clearCookie("token");
+      return res.status(401).json({
+        message: "token missed",
+      });
+    }
+
+    const user = User.findByToken(token);
+
+    if (!user) {
+      return res.status(409).json({
+        message: "user not found",
+      });
+    }
+    const cookieToken = User.createToken(user.id);
+
+    cookieGen(res, cookieToken);
+
+    const acc = Account.findByAccount(user.account);
+    acc.history = acc.history.map((item) => {
+      item.fdate = dateGen(item.date);
+
+      return item;
+    });
+
+    res.status(200).json({
+      message: {
+        name: user.name,
+        account: user.account,
+        balance: acc.balance,
+        history: acc.history,
+      },
+    });
+  } catch (error) {
+    console.log("Error on me controller");
+    console.log("============================");
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { register, login, logout, me };
