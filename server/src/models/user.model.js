@@ -13,7 +13,7 @@ class User {
       name: data.name ?? "unknown",
       tell: data.tell,
       password: data.password,
-      account: accGen(User.#acounts()),
+      account: accGen(User.acounts()),
       code: codeGen(),
       token: null,
     };
@@ -36,7 +36,7 @@ class User {
     return ids;
   }
 
-  static #acounts() {
+  static acounts() {
     const acounts = User.#users.map((item) => item.account);
     return acounts;
   }
