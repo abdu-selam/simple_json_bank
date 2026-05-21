@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const env = require("./utils/env");
 const userRoute = require("./routes/user.route");
+const bankRoute = require("./routes/account.route");
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(
 );
 
 app.use("/user", userRoute);
+app.use("/bank", bankRoute);
 
 module.exports = app;
