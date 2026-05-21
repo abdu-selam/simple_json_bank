@@ -113,4 +113,24 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const logout = async (req, res) => {
+  try {
+    req.user.token = null;
+    User.tokenAdder(req.user.id, null);
+
+    res.clearCookie("token");
+
+    res.status(204).json({
+      message: "Loged out",
+    });
+  } catch (error) {
+    console.log("Error on logout controller");
+    console.log("============================");
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { register, login, logout };
