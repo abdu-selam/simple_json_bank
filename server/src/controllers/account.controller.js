@@ -1,6 +1,7 @@
 const Account = require("../models/account.model");
 const User = require("../models/user.model");
 const Wait = require("../models/wait.model");
+const { dateGen } = require("../utils/token");
 
 const checkSend = async (req, res) => {
   try {
@@ -108,4 +109,38 @@ const send = async (req, res) => {
   }
 };
 
-module.exports = { checkSend, send };
+const history = (req, res) => {
+  try {
+    const accountData = Account.findByAccount(req.user.account);
+
+    const historyList = accountData.history.map((his) => {
+      const other = User.findByAccount(his.other);
+      const data = {
+        amount: his.amount,
+        reason: his.reason,
+        fdate: dateGen(his.date),
+        tr_code: his.tr_code,
+        status: his.type,
+        other: {
+          name: other.name,
+          account: other.account,
+        },
+      };
+
+      return data;
+    });
+
+    res.status(200).json({
+      message: historyList,
+    });
+  } catch (error) {
+    console.log("Error on history controller");
+    console.log("============================");
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { checkSend, send, history };
