@@ -61,7 +61,7 @@ class User {
 
     writeData("user", users);
     User.#users = readData("user");
-    return User.findById(data.id);
+    return User.findById(id);
   }
 
   static findByToken(token) {

@@ -30,7 +30,7 @@ class Account {
     }
 
     const account = {
-      account: "",
+      account: data.account,
       balance: data.balance,
       history: [],
     };

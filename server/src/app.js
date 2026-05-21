@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const env = require("./utils/env");
+const userRoute = require("./routes/user.route");
 
 const app = express();
 
@@ -14,5 +15,7 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use("/user", userRoute);
 
 module.exports = app;
