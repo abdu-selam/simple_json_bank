@@ -61,4 +61,14 @@ const cookieTokenGen = (uid) => {
   return id;
 };
 
-module.exports = { idGen, cookieTokenGen, codeGen, accGen };
+const dateGen = (timestamp) => {
+  const date = new Date(timestamp);
+
+  return {
+    day: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear(),
+  };
+};
+
+module.exports = { idGen, cookieTokenGen, codeGen, accGen, dateGen };

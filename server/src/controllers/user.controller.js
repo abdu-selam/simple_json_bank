@@ -1,6 +1,7 @@
 const Account = require("../models/account.model");
 const User = require("../models/user.model");
 const { cookieGen } = require("../utils/cookie");
+const { dateGen } = require("../utils/token");
 
 const register = async (req, res) => {
   try {
@@ -54,4 +55,62 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+  try {
+    const { body } = req;
+
+    if (!body.tell || !body.password) {
+      return res.status(409).json({
+        message: "invalid cridentials",
+      });
+    }
+
+    const user = User.findByTell(body.tell);
+    if (!user) {
+      return res.status(409).json({
+        message: "invalid cridentials",
+      });
+    }
+
+    try {
+      const isValid = User.validatePassword(user.id, body.password);
+      if (!isValid) {
+        return res.status(409).json({
+          message: "invalid cridentials",
+        });
+      }
+    } catch (error) {
+      return res.status(409).json({
+        message: "invalid cridentials",
+      });
+    }
+
+    const token = User.createToken(user.id);
+
+    cookieGen(res, token);
+    const acc = Account.findByAccount(user.account);
+    acc.history = acc.history.map((item) => {
+      item.fdate = dateGen(item.date);
+
+      return item;
+    });
+
+    res.status(200).json({
+      message: {
+        name: user.name,
+        account: user.account,
+        balance: acc.balance,
+        history: acc.history,
+      },
+    });
+  } catch (error) {
+    console.log("Error on login controller");
+    console.log("============================");
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { register, login };

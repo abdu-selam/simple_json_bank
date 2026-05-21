@@ -107,7 +107,7 @@ class Account {
   }
 
   static #historyGen(amount, other, reason, type = "send") {
-    const date = new Date();
+    const date = Date.now();
     const data = {
       type,
       other,
