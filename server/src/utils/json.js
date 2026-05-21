@@ -5,6 +5,7 @@ const root = "./db";
 const dataType = {
   user: `${root}/users.json`,
   acc: `${root}/accounts.json`,
+  wait: `${root}/waits.json`,
 };
 
 const readData = (type) => {

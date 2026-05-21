@@ -71,4 +71,17 @@ const dateGen = (timestamp) => {
   };
 };
 
-module.exports = { idGen, cookieTokenGen, codeGen, accGen, dateGen };
+const trGen = (timestamp) => {
+  let tr_code = "tr-";
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const len = letters.length;
+
+  for (let i = 0; i < 8; i++) {
+    const rand = Math.floor(Math.random() * len);
+    tr_code += letters.slice(rand, rand + 1);
+  }
+
+  return tr_code;
+};
+
+module.exports = { idGen, cookieTokenGen, codeGen, accGen, dateGen, trGen };

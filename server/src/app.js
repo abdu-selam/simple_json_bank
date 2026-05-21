@@ -17,6 +17,10 @@ app.use(
   }),
 );
 
+app.get("/", (_, res) => {
+  res.send("heelo");
+});
+
 app.use("/user", userRoute);
 app.use("/bank", bankRoute);
 

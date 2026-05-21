@@ -1,5 +1,7 @@
 const { readData, writeData } = require("../utils/json");
+const { trGen } = require("../utils/token");
 const User = require("./user.model");
+const Wait = require("./wait.model");
 
 class Account {
   static #accounts = readData("acc");
@@ -73,22 +75,37 @@ class Account {
       };
     }
 
+    const tr_code = trGen();
+
     const senderData = {
       account: sender.account,
       balance: sender.balance - amount,
-      history: Account.#historyGen(amount, recieverAcc, reason),
+      history: Account.#historyGen(amount, recieverAcc, reason, tr_code),
     };
 
     const recieverData = {
       account: reciever.account,
       balance: reciever.balance + amount,
-      history: Account.#historyGen(amount, senderAcc, reason, "recieve"),
+      history: Account.#historyGen(
+        amount,
+        senderAcc,
+        reason,
+        tr_code,
+        "recieve",
+      ),
     };
 
     await Account.#updateAcc(senderData);
     await Account.#updateAcc(recieverData);
 
-    return Account.findByAccount(senderAcc);
+    await Wait.deleteWait(sender.account);
+
+    return {
+      sender: sender.account,
+      reciever: reciever.account,
+      amount,
+      tr_code,
+    };
   }
 
   static async #updateAcc(account) {
@@ -103,10 +120,10 @@ class Account {
 
     writeData("acc", file);
 
-    Account.#accounts = readData("user");
+    Account.#accounts = readData("acc");
   }
 
-  static #historyGen(amount, other, reason, type = "send") {
+  static #historyGen(amount, other, reason, tr_code, type = "send") {
     const date = Date.now();
     const data = {
       type,
@@ -114,6 +131,7 @@ class Account {
       amount,
       reason,
       date,
+      tr_code,
     };
 
     return data;
