@@ -100,7 +100,12 @@ const login = async (req, res) => {
         name: user.name,
         account: user.account,
         balance: acc.balance,
-        history: acc.history,
+        history: acc.history.map((item) => ({
+          amount: item.amount,
+          fdate: item.fdate,
+          type: item.type,
+          other: item.other,
+        })),
       },
     });
   } catch (error) {
@@ -173,7 +178,12 @@ const me = async (req, res) => {
         name: user.name,
         account: user.account,
         balance: acc.balance,
-        history: acc.history,
+        history: acc.history.map((item) => ({
+          amount: item.amount,
+          fdate: item.fdate,
+          type: item.type,
+          other: item.other,
+        })),
       },
     });
   } catch (error) {
