@@ -1,9 +1,18 @@
-const express = require("express")
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
-const app = express()
+const env = require("./utils/env");
 
-app.get("/",(req, res) => {
-    res.send("Hello world")
-})
+const app = express();
 
-module.exports = app
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: env.CLIENT,
+    credentials: true,
+  }),
+);
+
+module.exports = app;
